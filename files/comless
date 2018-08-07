@@ -1,0 +1,61 @@
+#! /usr/bin/env python3
+
+import argparse
+import os
+
+LINE_COMMENTS = {
+    'c': ['//'],
+    'cpp': ['//'],
+    'cxx': ['//'],
+    'C': ['//'],
+    'h': ['//'],
+    'hpp': ['//'],
+    'hxx': ['//'],
+    'H': ['//'],
+
+    'java': ['//'],
+
+    'js': ['//'],
+    'jsx': ['//'],
+
+    'cs': ['//'],
+
+    'py': ['#'],
+
+    'sql': ['--'],
+
+    'hs': ['--'],
+
+    'conf': ['#'],
+
+    'ini': [';']
+}
+
+DEFAULT_COMMENTS = ['#']
+
+
+def get_stripped_file(file, line_comments):
+    with open(file, 'r') as f:
+        return [l for l in f if not any(l.lstrip().startswith(lc) for lc in line_comments)]
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        prog='comless',
+        # usage='comless FILE [-d/--commen',
+        description='Command-line utility for displaying file contents without commented lines',
+        epilog=''
+    )
+    parser.add_argument('file', help='File to display')
+
+    args = parser.parse_args()
+    
+    tmp_ext = os.path.splitext(args.file)[1]
+    ext = tmp_ext[1:] if tmp_ext else None
+    line_comments = LINE_COMMENTS.get(ext, DEFAULT_COMMENTS)
+    
+    print(''.join(get_stripped_file(args.file, line_comments)))
+
+
+if __name__ == "__main__":
+    main()
